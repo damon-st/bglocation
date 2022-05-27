@@ -1,0 +1,106 @@
+{
+  "project_info": {
+    "project_number": "724649066042",
+    "firebase_url": "https://angular-html-cfe31.firebaseio.com",
+    "project_id": "angular-html-cfe31",
+    "storage_bucket": "angular-html-cfe31.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:724649066042:android:756e75d0d2e954c73abf03",
+        "android_client_info": {
+          "package_name": "com.damon.microfono"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "724649066042-t1kka0i3kjevdrgf5ovm7lce6rtnou0e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUc_l6xvwm2OmxLxz3ywdItulSm5D7uww"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "724649066042-t1kka0i3kjevdrgf5ovm7lce6rtnou0e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:724649066042:android:0e854d0d0ffab34a3abf03",
+        "android_client_info": {
+          "package_name": "com.damon.pip2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "724649066042-t1kka0i3kjevdrgf5ovm7lce6rtnou0e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUc_l6xvwm2OmxLxz3ywdItulSm5D7uww"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "724649066042-t1kka0i3kjevdrgf5ovm7lce6rtnou0e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:724649066042:android:212aad6e857483ba3abf03",
+        "android_client_info": {
+          "package_name": "com.damon.zoom"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "724649066042-tomms4stfpmm8fo2m179cbhi9ad5fetc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.damon.zoom",
+            "certificate_hash": "dfe69388c8e38498fbd7ee5a18ddb3fde5315afe"
+          }
+        },
+        {
+          "client_id": "724649066042-t1kka0i3kjevdrgf5ovm7lce6rtnou0e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUc_l6xvwm2OmxLxz3ywdItulSm5D7uww"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "724649066042-t1kka0i3kjevdrgf5ovm7lce6rtnou0e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
