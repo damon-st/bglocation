@@ -31,7 +31,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
-
+  bool isRunning = false;
   @override
   void initState() {
     super.initState();
@@ -39,21 +39,42 @@ class _MyAppState extends State<MyApp> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
-    await Bglocation.onCreate("DASASDAS");
+    Map r = await Bglocation.getStatus();
+    isRunning = r["status"];
 
-    Bglocation.getCurrentPosition().listen((event) {
-      print(event);
-    });
+    if (!isRunning) {
+      await Bglocation.onCreate("DASASDAS");
 
-    await Bglocation.start();
-    await Bglocation.goForeground();
+      Bglocation.getCurrentPosition().listen((event) {
+        print(event);
+      });
+      await Bglocation.start();
+      await Bglocation.goForeground();
+    } else {
+      // await Bglocation.stopListenet();
+      // await Bglocation.stopForeground();
+      // await Future.delayed(const Duration(seconds: 3), () {});
+    }
 
     if (!mounted) return;
+    setState(() {
+      _platformVersion = "$r";
+    });
   }
 
   Future<void> stopListen() async {
     bool r = await Bglocation.stopListenet();
     print(r);
+  }
+
+  void getStatus() async {
+    final r = await Bglocation.getStatus();
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _platformVersion = "$r";
+    });
   }
 
   @override
@@ -77,6 +98,10 @@ class _MyAppState extends State<MyApp> {
             ElevatedButton(
               onPressed: stopListen,
               child: Text("Stop listent"),
+            ),
+            ElevatedButton(
+              onPressed: getStatus,
+              child: Text("Get status"),
             ),
           ],
         ),
