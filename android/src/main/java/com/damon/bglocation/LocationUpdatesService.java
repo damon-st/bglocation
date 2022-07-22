@@ -264,7 +264,11 @@ public class LocationUpdatesService extends Service {
                 startForeground(NOTIFICATION_ID, getNotification());
             }
              */
-            startForeground(NOTIFICATION_ID, getNotification());
+            try{
+                startForeground(NOTIFICATION_ID, getNotification());
+            }catch(Exception e) {
+                    Log.i(TAG,"ERROR "+e.getMessage());
+            }
         }
         return true; // Ensures onRebind() is called when a client re-binds.
     }
