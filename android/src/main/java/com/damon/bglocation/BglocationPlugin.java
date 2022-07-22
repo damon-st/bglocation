@@ -1,6 +1,7 @@
 package com.damon.bglocation;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 
@@ -151,6 +152,8 @@ public class BglocationPlugin implements FlutterPlugin, MethodCallHandler,EventC
               tracking.stopForeground();
               result.success(true);
             }else{
+              Intent intent= new Intent(activity,LocationUpdatesService.class);
+              activity.stopService(intent);
               result.success(false);
             }
             break;
