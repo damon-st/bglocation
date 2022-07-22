@@ -41,15 +41,17 @@ import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * A bound and started service that is promoted to a foreground service when location updates have
@@ -90,7 +92,7 @@ public class LocationUpdatesService extends Service {
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
      */
-    private   long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
+    private   long UPDATE_INTERVAL_IN_MILLISECONDS = 1000;
 
     /**
      * The fastest rate for active location updates. Updates will never be more frequent
@@ -99,6 +101,11 @@ public class LocationUpdatesService extends Service {
     private   long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
             UPDATE_INTERVAL_IN_MILLISECONDS / 2;
 
+    /*
+    * The value for update in firestore for users listen
+     */
+    private  long TIME_USER_UPDATE = 5000;
+    private  long timeForUpdate= TIME_USER_UPDATE;
     /**
      * The identifier for the notification displayed for the foreground service.
      */
@@ -140,6 +147,7 @@ public class LocationUpdatesService extends Service {
 
     public LocationUpdatesService() {
     }
+
     @Override
     public void onCreate() {
         LocationServices.getGeofencingClient(this);
@@ -157,8 +165,10 @@ public class LocationUpdatesService extends Service {
         id =  sharedPreferences.getString(PACKAGE_NAME+"-id","hola");
         collection = sharedPreferences.getString(PACKAGE_NAME+"-nameCollection","ruta");
 
-        UPDATE_INTERVAL_IN_MILLISECONDS = sharedPreferences.getLong("interval",10000);
+        UPDATE_INTERVAL_IN_MILLISECONDS = sharedPreferences.getLong("conductorInterval",1000);
         FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS/2;
+
+        TIME_USER_UPDATE = sharedPreferences.getLong("interval",5000);
 
         createLocationRequest(UPDATE_INTERVAL_IN_MILLISECONDS,FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS,true);
         getLastLocation();
@@ -407,12 +417,24 @@ public class LocationUpdatesService extends Service {
     }
 
     void savedLocation(Location location){
-        collectionReference
-                .collection(collection)
-                .document(id)
-                .set(location);
-
+        Date  date= new Date();
+        Log.i(TAG,"ENTRO AQUI -1 "+date.toString());
+        if(timeForUpdate>=0){
+            timeForUpdate=timeForUpdate-FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS;
+        }
+        if(timeForUpdate==0){
+            collectionReference
+                    .collection(collection)
+                    .document(id)
+                    .set(location);
+            Date  date2= new Date();
+            Log.i(TAG,"ENTRO AQUI -2 "+date2.toString());
+            timeForUpdate=TIME_USER_UPDATE;
+        }
+        Date  date1= new Date();
+        Log.i(TAG,"ENTRO AQUI -3 "+date1.toString());
     }
+
 
     /**
      * Sets the location request parameters.
