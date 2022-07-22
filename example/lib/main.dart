@@ -32,20 +32,36 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
   bool isRunning = false;
+
+  StreamSubscription<Map<String, dynamic>>? subPosition;
+
   @override
   void initState() {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    subPosition?.cancel();
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    initPlatformState();
+  }
+
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
+    await Bglocation.stopForeground();
     Map r = await Bglocation.getStatus();
     isRunning = r["status"];
 
     if (!isRunning) {
       await Bglocation.onCreate("DASASDAS");
 
-      Bglocation.getCurrentPosition().listen((event) {
+      subPosition = Bglocation.getCurrentPosition().listen((event) {
         print(event);
       });
       await Bglocation.start();

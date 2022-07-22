@@ -208,8 +208,8 @@ public class BglocationPlugin implements FlutterPlugin, MethodCallHandler,EventC
 
     @Override
     public void onDetachedFromActivityForConfigChanges() {
-      activity = null;
-      tracking = null;
+//      activity = null;
+//      tracking = null;
 
     }
 
@@ -220,7 +220,7 @@ public class BglocationPlugin implements FlutterPlugin, MethodCallHandler,EventC
 
     @Override
     public void onDetachedFromActivity() {
-      activity = null;
-      tracking = null;
+//      activity = null;
+//      tracking = null;
     }
 }
