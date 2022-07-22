@@ -161,10 +161,12 @@ public class BglocationPlugin implements FlutterPlugin, MethodCallHandler,EventC
           case "intervalo":
             if(tracking!=null){
               Map<String,Object> a = (Map<String, Object>) call.arguments;
-              long interval = (long) a.get("interval");
+              long interval =(int) a.get("interval");
+              long conductorInterval =(int)a.get("conductorInterval");
               SharedPreferences sharedPreferences2 = activity.getSharedPreferences("com.damon.bglocation-data1",activity.MODE_PRIVATE);
               SharedPreferences.Editor editor2 = sharedPreferences2.edit();
               editor2.putLong("interval",interval);
+              editor2.putLong("conductorInterval",conductorInterval);
               editor2.apply();
               result.success(true);
             }else {

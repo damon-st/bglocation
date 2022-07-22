@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -62,7 +63,11 @@ class _MyAppState extends State<MyApp> {
       await Bglocation.onCreate("DASASDAS");
 
       subPosition = Bglocation.getCurrentPosition().listen((event) {
-        print(event);
+        if (mounted) {
+          setState(() {
+            _platformVersion = jsonEncode(event);
+          });
+        }
       });
       await Bglocation.start();
       await Bglocation.goForeground();
@@ -93,6 +98,10 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  void setInterval() async {
+    bool r = await Bglocation.setIntervalNew(5000, 500);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -118,6 +127,10 @@ class _MyAppState extends State<MyApp> {
             ElevatedButton(
               onPressed: getStatus,
               child: Text("Get status"),
+            ),
+            ElevatedButton(
+              onPressed: setInterval,
+              child: Text("Set interval time"),
             ),
           ],
         ),

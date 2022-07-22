@@ -84,10 +84,15 @@ class Bglocation {
     }
   }
 
-  static Future<bool> setIntervalNew(int interval) async {
+  ///[pasajeroInterval]Time in millisecons 5*1000 for update location for user
+  ///[conductorInterval]Time in millisecons 1*1000 for update conductor
+  ///conductor time divide 2 in the fastUpdate
+  static Future<bool> setIntervalNew(
+      int pasajeroInterval, int conductorInterval) async {
     try {
       return await _channel.invokeMethod("intervalo", {
-        "interval": interval,
+        "interval": pasajeroInterval,
+        "conductorInterval": conductorInterval,
       });
     } on PlatformException catch (e) {
       return false;
