@@ -420,16 +420,16 @@ public class LocationUpdatesService extends Service {
         Date  date= new Date();
         Log.i(TAG,"ENTRO AQUI -1 "+date.toString());
         if(timeForUpdate>=0){
-            timeForUpdate=timeForUpdate-FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS;
+            timeForUpdate=timeForUpdate-UPDATE_INTERVAL_IN_MILLISECONDS;
         }
         if(timeForUpdate==0){
+            timeForUpdate=TIME_USER_UPDATE;
             collectionReference
                     .collection(collection)
                     .document(id)
                     .set(location);
             Date  date2= new Date();
             Log.i(TAG,"ENTRO AQUI -2 "+date2.toString());
-            timeForUpdate=TIME_USER_UPDATE;
         }
         Date  date1= new Date();
         Log.i(TAG,"ENTRO AQUI -3 "+date1.toString());
