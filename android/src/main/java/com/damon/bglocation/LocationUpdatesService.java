@@ -47,9 +47,12 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -160,7 +163,7 @@ public class LocationUpdatesService extends Service {
                 onNewLocation(locationResult.getLastLocation());
             }
         };
-
+        FirebaseApp.initializeApp(this);
         SharedPreferences sharedPreferences = getSharedPreferences(PACKAGE_NAME+"-data1",MODE_PRIVATE);
         id =  sharedPreferences.getString(PACKAGE_NAME+"-id","hola");
         collection = sharedPreferences.getString(PACKAGE_NAME+"-nameCollection","ruta");
@@ -423,11 +426,43 @@ public class LocationUpdatesService extends Service {
             timeForUpdate=timeForUpdate-UPDATE_INTERVAL_IN_MILLISECONDS;
         }
         if(timeForUpdate==0){
+
+          Map<String,Object> data = new HashMap<>();
+          data.put("accuracy",location.getAccuracy());
+          data.put("altitude",location.getAltitude());
+          data.put("bearing",location.getBearing());
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            data.put("bearingAccuracyDegrees",location.getBearingAccuracyDegrees());
+
+            data.put("verticalAccuracyMeters",location.getVerticalAccuracyMeters());
+
+          }
+          if (Build.VERSION.SDK_INT >= 33) {
+            data.put("complete",false);
+          }
+          data.put("elapsedRealtimeNanos",location.getElapsedRealtimeNanos());
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            data.put("elapsedRealtimeUncertaintyNanos",location.getElapsedRealtimeUncertaintyNanos());
+          }
+          data.put("fromMockProvider",location.isFromMockProvider());
+
+          data.put("latitude",location.getLatitude());
+          data.put("longitude",location.getLongitude());
+
+          data.put("provider",location.getProvider());
+          data.put("speed",location.getSpeed());
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            data.put("speedAccuracyMetersPerSecond",location.getSpeedAccuracyMetersPerSecond());
+
+            data.put("speedAccuracy",location.getSpeedAccuracyMetersPerSecond());
+          }
+
+          data.put("time",location.getTime());
             timeForUpdate=TIME_USER_UPDATE;
             collectionReference
                     .collection(collection)
                     .document(id)
-                    .set(location);
+                    .set(data);
             Date  date2= new Date();
             Log.i(TAG,"ENTRO AQUI -2 "+date2.toString());
         }
