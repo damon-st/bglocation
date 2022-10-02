@@ -55,6 +55,7 @@ class _MyAppState extends State<MyApp> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
+    await Bglocation.stopListenet();
     await Bglocation.stopForeground();
     Map r = await Bglocation.getStatus();
     isRunning = r["status"];
@@ -102,6 +103,11 @@ class _MyAppState extends State<MyApp> {
     bool r = await Bglocation.setIntervalNew(5000, 500);
   }
 
+  void setTitle() async {
+    await Bglocation.setTitle(
+        title: "hola", subTitle: "como", textButton: "cancela");
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -131,6 +137,10 @@ class _MyAppState extends State<MyApp> {
             ElevatedButton(
               onPressed: setInterval,
               child: Text("Set interval time"),
+            ),
+            ElevatedButton(
+              onPressed: setTitle,
+              child: Text("Set title"),
             ),
           ],
         ),

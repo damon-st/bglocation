@@ -84,7 +84,6 @@ public class Tracking  implements
 
 
     void onCreate() {
-
         myReceiver = new MyReceiver(result);
 
 
@@ -114,16 +113,18 @@ public class Tracking  implements
         // that since this activity is in the foreground, the service can exit foreground mode.
         try {
 
-            context.bindService(new Intent(context, LocationUpdatesService.class), mServiceConnection,
-                    Context.BIND_AUTO_CREATE);
+              context.bindService(new Intent(context, LocationUpdatesService.class), mServiceConnection,
+                      Context.BIND_AUTO_CREATE);
 
         }catch (Exception e){
             System.out.println(e);
-
+            Log.e("ERROR",e.getMessage());
         }
 
 
     }
+
+
 
     void requestLocationActulization(){
         if (!checkPermissions()) {

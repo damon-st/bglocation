@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
 class Bglocation {
@@ -95,6 +96,23 @@ class Bglocation {
         "conductorInterval": conductorInterval,
       });
     } on PlatformException catch (e) {
+      return false;
+    }
+  }
+
+  static Future<bool> setTitle({
+    required String title,
+    required String subTitle,
+    required String textButton,
+  }) async {
+    try {
+      return await _channel.invokeMethod("changeTitle", {
+        "title": title,
+        "subTitle": subTitle,
+        "textButton": textButton,
+      });
+    } on PlatformException catch (e) {
+      debugPrint("$e");
       return false;
     }
   }

@@ -40,8 +40,26 @@ public class BglocationPlugin implements FlutterPlugin, MethodCallHandler,EventC
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
-
+      SharedPreferences sharedPreferences = activity.getSharedPreferences("com.damon.bglocation-data1",activity.MODE_PRIVATE);
+      SharedPreferences.Editor editor = sharedPreferences.edit();
         switch (call.method) {
+
+          case "changeTitle":
+            try{
+              Map<String,Object> datos = (Map<String, Object>) call.arguments;
+              String title = (String) datos.get("title");
+              String subTitle = (String) datos.get("subTitle");
+              String textButton = (String) datos.get("textButton");
+
+              editor.putString("com.damon.bglocation-title",title);
+              editor.putString("com.damon.bglocation-subTitle",subTitle);
+              editor.putString("com.damon.bglocation-textButton",textButton);
+              editor.apply();
+              result.success(true);
+            }catch (Exception e){
+              result.error("changedTitle",e.getMessage(),e.getLocalizedMessage());
+            }
+            break;
 
             case  "goForeground":
                 if(tracking!=null){
@@ -58,8 +76,6 @@ public class BglocationPlugin implements FlutterPlugin, MethodCallHandler,EventC
                   Map<String,Object> s = (Map<String, Object>) call.arguments;
                   String id = (String) s.get("id");
                   String nameCollection = (String) s.get("nameCollection");
-                  SharedPreferences sharedPreferences = activity.getSharedPreferences("com.damon.bglocation-data1",activity.MODE_PRIVATE);
-                  SharedPreferences.Editor editor = sharedPreferences.edit();
                   editor.putString("com.damon.bglocation-id",id);
                   editor.putString("com.damon.bglocation-nameCollection",nameCollection);
                   editor.apply();

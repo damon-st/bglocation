@@ -34,6 +34,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.Process;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -45,6 +46,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
@@ -82,7 +84,7 @@ public class LocationUpdatesService extends Service {
     /**
      * The name of the channel for notifications.
      */
-    private static final String CHANNEL_ID = "channel_01";
+    private static final String CHANNEL_ID = "tracking";
 
     static final String ACTION_BROADCAST = PACKAGE_NAME + ".broadcast";
 
@@ -148,6 +150,10 @@ public class LocationUpdatesService extends Service {
     String id ="";
     String collection = "ruta";
 
+    private  String titleNotify ="Plann momentos que marcan";
+    private  String subtitleNotify ="En ruta";
+    private  String textButtonNotify ="Dejar de notificar a los pasajeros";
+
     public LocationUpdatesService() {
     }
 
@@ -167,6 +173,9 @@ public class LocationUpdatesService extends Service {
         SharedPreferences sharedPreferences = getSharedPreferences(PACKAGE_NAME+"-data1",MODE_PRIVATE);
         id =  sharedPreferences.getString(PACKAGE_NAME+"-id","hola");
         collection = sharedPreferences.getString(PACKAGE_NAME+"-nameCollection","ruta");
+      titleNotify = sharedPreferences.getString(PACKAGE_NAME+"-title","Plann momentos que marcan");
+      subtitleNotify = sharedPreferences.getString(PACKAGE_NAME+"-subTitle","En ruta");
+      textButtonNotify = sharedPreferences.getString(PACKAGE_NAME+"-textButton","Dejar de notificar a los pasajeros");
 
         UPDATE_INTERVAL_IN_MILLISECONDS = sharedPreferences.getLong("conductorInterval",1000);
         FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS/2;
@@ -186,8 +195,12 @@ public class LocationUpdatesService extends Service {
             CharSequence name = getString(R.string.app_name);
             // Create the channel for the notification
             NotificationChannel mChannel =
-                    new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT);
-
+                    new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_HIGH);
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            mChannel.setAllowBubbles(true);
+          }
+          mChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+            mChannel.setDescription("This channel using show notification for tracking");
             // Set the Notification Channel for the Notification Manager.
             mNotificationManager.createNotificationChannel(mChannel);
         }
@@ -223,7 +236,8 @@ public class LocationUpdatesService extends Service {
         // We got here because the user decided to remove location updates from the notification.
         if (startedFromNotification) {
             removeLocationUpdates();
-            stopSelf();
+            stopSelf(NOTIFICATION_ID);
+            Process.killProcess(Process.myPid());
         }
         // Tells the system to not try to recreate the service after it has been killed.
         return START_NOT_STICKY;
@@ -289,6 +303,7 @@ public class LocationUpdatesService extends Service {
     @Override
     public void onDestroy() {
         mServiceHandler.removeCallbacksAndMessages(null);
+        removeLocationUpdates();
     }
 
     /**
@@ -353,10 +368,10 @@ public class LocationUpdatesService extends Service {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this,CHANNEL_ID)
 //                .addAction(R.drawable.ic_launch, getString(R.string.launch_activity),
 //                        activityPendingIntent)
-                .addAction(R.drawable.ic_cancel, "Dejar de notificar a los pasajeros",
+                .addAction(R.drawable.ic_cancel, textButtonNotify,
                         servicePendingIntent)
-                .setContentText("En ruta")
-                .setContentTitle("Plann momentos que marcan")
+                .setContentText(subtitleNotify)
+                .setContentTitle(titleNotify)
                 .setOngoing(true)
                 .setPriority(Notification.PRIORITY_HIGH)
                 .setSmallIcon(R.mipmap.ic_launcher)
@@ -364,7 +379,11 @@ public class LocationUpdatesService extends Service {
                 .setSilent(true)
                 .setWhen(System.currentTimeMillis());
 
-        // Set the Channel ID for Android O.
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        builder.setCategory(Notification.CATEGORY_SERVICE);
+      }
+
+      // Set the Channel ID for Android O.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             builder.setChannelId(CHANNEL_ID); // Channel ID
         }
@@ -479,7 +498,7 @@ public class LocationUpdatesService extends Service {
         .setInterval(interval)
         .setFastestInterval(fastestInterval)
          .setWaitForAccurateLocation(waitForAccurate)
-        .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        .setPriority(Priority.PRIORITY_HIGH_ACCURACY);
     }
 
     /**
