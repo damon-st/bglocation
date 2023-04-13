@@ -153,7 +153,7 @@ public class LocationUpdatesService extends Service {
     private  String titleNotify ="Plann momentos que marcan";
     private  String subtitleNotify ="En ruta";
     private  String textButtonNotify ="Dejar de notificar a los pasajeros";
-
+    private  boolean useFirebase =true;
     public LocationUpdatesService() {
     }
 
@@ -176,6 +176,7 @@ public class LocationUpdatesService extends Service {
       titleNotify = sharedPreferences.getString(PACKAGE_NAME+"-title","Plann momentos que marcan");
       subtitleNotify = sharedPreferences.getString(PACKAGE_NAME+"-subTitle","En ruta");
       textButtonNotify = sharedPreferences.getString(PACKAGE_NAME+"-textButton","Dejar de notificar a los pasajeros");
+        useFirebase=sharedPreferences.getBoolean(PACKAGE_NAME+"-useFirebase",true);
 
         UPDATE_INTERVAL_IN_MILLISECONDS = sharedPreferences.getLong("conductorInterval",1000);
         FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS/2;
@@ -423,14 +424,18 @@ public class LocationUpdatesService extends Service {
         if (serviceIsRunningInForeground(this)) {
             mNotificationManager.notify(NOTIFICATION_ID, getNotification());
             try {
-                savedLocation(mLocation);
+                if(useFirebase){
+                    savedLocation(mLocation);
+                }
             }catch (Exception e){
                 System.out.println(e);
             }
 
         }else {
             try {
-                savedLocation(mLocation);
+               if(useFirebase){
+                   savedLocation(mLocation);
+               }
             }catch (Exception e){
                 System.out.println(e);
 

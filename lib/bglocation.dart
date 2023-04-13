@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bglocation/models/location_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
@@ -10,6 +11,23 @@ class Bglocation {
   static Future<String?> get platformVersion async {
     final String? version = await _channel.invokeMethod('getPlatformVersion');
     return version;
+  }
+
+  static Future<dynamic> useFirebase({required bool useFirebase}) async {
+    try {
+      return await _channel
+          .invokeMethod("useFirebase", {"useFirebase": useFirebase});
+    } catch (e) {
+      debugPrint("$e");
+      return false;
+    }
+  }
+
+  static Stream<LocationModel> getListenPosition() {
+    return _eventChannel
+        .receiveBroadcastStream()
+        .distinct()
+        .map((event) => LocationModel.fromMap(Map.from(event)));
   }
 
   static Stream<Map<String, dynamic>> getCurrentPosition() {

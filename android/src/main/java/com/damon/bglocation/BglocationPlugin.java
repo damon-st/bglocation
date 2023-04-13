@@ -43,6 +43,16 @@ public class BglocationPlugin implements FlutterPlugin, MethodCallHandler,EventC
       SharedPreferences sharedPreferences = activity.getSharedPreferences("com.damon.bglocation-data1",activity.MODE_PRIVATE);
       SharedPreferences.Editor editor = sharedPreferences.edit();
         switch (call.method) {
+            case "useFirebase":
+                try {
+                    Map<String,Object>datos= (Map<String, Object>) call.arguments;
+                    editor.putBoolean("com.damon.bglocation-useFirebase",(boolean)datos.get("useFirebase"));
+                    editor.apply();
+                    result.success(true);
+                }catch (Exception e){
+                    result.error("changedTitle",e.getMessage(),e.getLocalizedMessage());
+                }
+                break;
 
           case "changeTitle":
             try{
