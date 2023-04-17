@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -10,17 +11,23 @@ import 'package:bglocation/bglocation.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-      options: const FirebaseOptions(
-          apiKey: "AIzaSyBpxaOc5SLtWJQ9eztLlM3RPZtn7K0Zbhs",
-          authDomain: "angular-html-cfe31.firebaseapp.com",
-          databaseURL: "https://angular-html-cfe31.firebaseio.com",
-          projectId: "angular-html-cfe31",
-          storageBucket: "angular-html-cfe31.appspot.com",
-          messagingSenderId: "724649066042",
-          appId: "1:724649066042:web:e38a5917eec8f6703abf03",
-          measurementId: "G-2W3KDWV1SV"));
-  runApp(const MyApp());
+  if (Platform.isAndroid) {
+    await Firebase.initializeApp(
+        options: const FirebaseOptions(
+            apiKey: "AIzaSyBpxaOc5SLtWJQ9eztLlM3RPZtn7K0Zbhs",
+            authDomain: "angular-html-cfe31.firebaseapp.com",
+            databaseURL: "https://angular-html-cfe31.firebaseio.com",
+            projectId: "angular-html-cfe31",
+            storageBucket: "angular-html-cfe31.appspot.com",
+            messagingSenderId: "724649066042",
+            appId: "1:724649066042:web:e38a5917eec8f6703abf03",
+            measurementId: "G-2W3KDWV1SV"));
+  } else {
+    await Firebase.initializeApp();
+  }
+  runApp(const MaterialApp(
+    home: MyApp(),
+  ));
 }
 
 class MyApp extends StatefulWidget {
@@ -39,6 +46,14 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    // initPlatformState();
+    subPosition = Bglocation.getCurrentPosition().listen((event) {
+      if (mounted) {
+        setState(() {
+          _platformVersion = jsonEncode(event);
+        });
+      }
+    });
   }
 
   @override
@@ -50,16 +65,20 @@ class _MyAppState extends State<MyApp> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    initPlatformState();
+    // initPlatformState();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
+    if (Platform.isIOS) {
+      start();
+      return;
+    }
     await Bglocation.stopListenet();
     await Bglocation.stopForeground();
     Map r = await Bglocation.getStatus();
     isRunning = r["status"];
-
+    debugPrint("$isRunning");
     if (!isRunning) {
       await Bglocation.onCreate("DASASDAS");
 
@@ -82,6 +101,15 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _platformVersion = "$r";
     });
+  }
+
+  void start() async {
+    try {
+      final r = await Bglocation.start();
+      showMsg("Start $r");
+    } catch (e) {
+      debugPrint("$e");
+    }
   }
 
   Future<void> stopListen() async {
@@ -108,42 +136,62 @@ class _MyAppState extends State<MyApp> {
         title: "hola", subTitle: "como", textButton: "cancela");
   }
 
+  void requestPermission() async {
+    try {
+      final result = await Bglocation.requestPermission();
+      debugPrint("$result");
+      showMsg("Permiso locarton result $result");
+    } catch (e) {
+      debugPrint("$e");
+    }
+  }
+
+  void showMsg(String msg) async {
+    try {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+    } catch (e) {
+      debugPrint("$e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
-        ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Center(
-              child: Text('Running on: $_platformVersion\n'),
-            ),
-            ElevatedButton(
-              onPressed: initPlatformState,
-              child: Text("Listen position"),
-            ),
-            ElevatedButton(
-              onPressed: stopListen,
-              child: Text("Stop listent"),
-            ),
-            ElevatedButton(
-              onPressed: getStatus,
-              child: Text("Get status"),
-            ),
-            ElevatedButton(
-              onPressed: setInterval,
-              child: Text("Set interval time"),
-            ),
-            ElevatedButton(
-              onPressed: setTitle,
-              child: Text("Set title"),
-            ),
-          ],
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Plugin example app'),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Center(
+            child: Text('Running on: $_platformVersion\n'),
+          ),
+          ElevatedButton(
+            onPressed: requestPermission,
+            child: Text("Request Permission"),
+          ),
+          ElevatedButton(
+            onPressed: initPlatformState,
+            child: Text("Listen position"),
+          ),
+          ElevatedButton(
+            onPressed: stopListen,
+            child: Text("Stop listent"),
+          ),
+          ElevatedButton(
+            onPressed: getStatus,
+            child: Text("Get status"),
+          ),
+          ElevatedButton(
+            onPressed: setInterval,
+            child: Text("Set interval time"),
+          ),
+          ElevatedButton(
+            onPressed: setTitle,
+            child: Text("Set title"),
+          ),
+        ],
       ),
     );
   }

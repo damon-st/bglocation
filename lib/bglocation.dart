@@ -13,6 +13,15 @@ class Bglocation {
     return version;
   }
 
+  static Future<bool> requestPermission() async {
+    try {
+      return await _channel.invokeMethod("permission");
+    } catch (e) {
+      debugPrint("$e");
+      return false;
+    }
+  }
+
   static Future<dynamic> useFirebase({required bool useFirebase}) async {
     try {
       return await _channel
@@ -49,6 +58,7 @@ class Bglocation {
     try {
       return await _channel.invokeMethod("getStatus");
     } on PlatformException catch (e) {
+      debugPrint("$e");
       return {};
     }
   }
@@ -59,6 +69,8 @@ class Bglocation {
       return await _channel
           .invokeMethod("create", {"id": id, "nameCollection": nameCollection});
     } on PlatformException catch (e) {
+      debugPrint("$e");
+
       return false;
     }
   }
@@ -67,6 +79,8 @@ class Bglocation {
     try {
       return await _channel.invokeMethod("start");
     } on PlatformException catch (e) {
+      debugPrint("$e");
+
       return false;
     }
   }
@@ -75,6 +89,8 @@ class Bglocation {
     try {
       return await _channel.invokeMethod("onResume");
     } on PlatformException catch (e) {
+      debugPrint("$e");
+
       return false;
     }
   }
@@ -83,6 +99,8 @@ class Bglocation {
     try {
       return await _channel.invokeMethod("onPause");
     } on PlatformException catch (e) {
+      debugPrint("$e");
+
       return false;
     }
   }
@@ -91,6 +109,8 @@ class Bglocation {
     try {
       return await _channel.invokeMethod("goForeground");
     } on PlatformException catch (e) {
+      debugPrint("$e");
+
       return false;
     }
   }
@@ -99,6 +119,8 @@ class Bglocation {
     try {
       return await _channel.invokeMethod("stopForeground");
     } on PlatformException catch (e) {
+      debugPrint("$e");
+
       return false;
     }
   }
@@ -114,6 +136,8 @@ class Bglocation {
         "conductorInterval": conductorInterval,
       });
     } on PlatformException catch (e) {
+      debugPrint("$e");
+
       return false;
     }
   }
