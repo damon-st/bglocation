@@ -17,6 +17,7 @@ public class Utils:NSObject, CLLocationManagerDelegate {
         super.init()
     locationManager.delegate=self;
     locationManager.showsBackgroundLocationIndicator=true;
+        locationManager.allowsBackgroundLocationUpdates=true;
     locationManager.desiredAccuracy=kCLLocationAccuracyBestForNavigation;
     debugPrint("INIT CLASS UTILS")
     }
@@ -30,6 +31,11 @@ public class Utils:NSObject, CLLocationManagerDelegate {
         skin = skink;
         locationManager.startUpdatingLocation();
        debugPrint("START LOCATION")
+        
+    }
+    
+    func stop(){
+        locationManager.stopUpdatingLocation();
     }
     
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {

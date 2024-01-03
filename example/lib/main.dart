@@ -1,13 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:bglocation/bglocation.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +24,23 @@ Future<void> main() async {
   } else {
     await Firebase.initializeApp();
   }
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
+
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin>()
+      ?.requestPermissions(alert: true, badge: true, sound: true);
+  const android = AndroidInitializationSettings("@mipmap/ic_launcher");
+  const ios = DarwinInitializationSettings();
+  const settings = InitializationSettings(android: android, iOS: ios);
+
+  await flutterLocalNotificationsPlugin.initialize(settings,
+      onDidReceiveBackgroundNotificationResponse:
+          onDidReceiveBackgroundNotificationResponse,
+      onDidReceiveNotificationResponse: onDidReceiveNotificationResponse);
   runApp(const MaterialApp(
     home: MyApp(),
   ));
@@ -49,6 +65,8 @@ class _MyAppState extends State<MyApp> {
     // initPlatformState();
     subPosition = Bglocation.getCurrentPosition().listen((event) {
       if (mounted) {
+        //  showNotification("Notification", jsonEncode(event));
+
         setState(() {
           _platformVersion = jsonEncode(event);
         });
@@ -194,5 +212,36 @@ class _MyAppState extends State<MyApp> {
         ],
       ),
     );
+  }
+}
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    'high_importance_channel2', 'high_importance_channel',
+    description: 'This channel is used for important notifications.',
+    importance: Importance.max,
+    enableLights: true,
+    enableVibration: true,
+    showBadge: true,
+    playSound: true);
+
+void onDidReceiveBackgroundNotificationResponse(NotificationResponse details) {}
+
+void onDidReceiveNotificationResponse(NotificationResponse details) {}
+void showNotification(String title, String msg) async {
+  try {
+    debugPrint("ENTRO EN NOTIFICATION");
+    await flutterLocalNotificationsPlugin.show(
+        450234,
+        title,
+        msg,
+        NotificationDetails(
+          android: AndroidNotificationDetails(channel.id, channel.name,
+              color: Colors.blue, playSound: true, importance: Importance.high),
+        ));
+  } catch (e) {
+    debugPrint("Error notification $e");
   }
 }

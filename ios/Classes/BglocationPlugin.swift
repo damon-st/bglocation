@@ -33,9 +33,11 @@ public class BglocationPlugin: NSObject, FlutterPlugin,FlutterStreamHandler {
           result(canStart)
           break;
       case "stop":
-          result(false)
+          utils.stop();
+          result(true);
           break;
       case "stopForeground":
+          utils.stop();
           result(false);
           break;
       case "getStatus":

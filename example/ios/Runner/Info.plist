@@ -56,5 +56,9 @@
 	<false/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app need use location</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app need use location</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app need use location</string>
 </dict>
 </plist>
